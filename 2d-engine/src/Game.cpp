@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <iostream>
 #include <SDL.h>
+#include <SDL_image.h>
 
 Game::Game() {
 	std::cout << "Game constructor called\n";
@@ -62,6 +63,10 @@ void Game::Run() {
 	}
 }
 
+void Game::Setup()
+{
+}
+
 void Game::ProcessInput() {
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) {
@@ -84,10 +89,23 @@ void Game::Update()
 
 void Game::Render()
 {
-	SDL_SetRenderDrawColor(renderer, 0, 50, 150, 255);
+	SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
 	SDL_RenderClear(renderer);
 
-	// TODO: Render all game objects
+	// Draw a primitive
+	//SDL_Rect player = {10, 10, 20, 20};
+	//SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	//SDL_RenderFillRect(renderer, &player);
+
+	// Draw a PNG texture
+	SDL_Surface *surface= IMG_Load("./assets/images/tank-tiger-right.png");
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_FreeSurface(surface);
+
+	// Copy the full texture (or a portion) to destination renderer window
+	SDL_Rect dstRect = {10, 10, 32, 32};
+	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+	SDL_DestroyTexture(texture);
 
 	SDL_RenderPresent(renderer);
 }

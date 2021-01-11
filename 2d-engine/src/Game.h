@@ -10,17 +10,21 @@ class Game
 		bool isFullscreen = false;
 		bool isFakeFullscreen = false; // 800x600 escalados
 		int windowMode = SDL_WINDOW_RESIZABLE;
+
 		SDL_Window *window = NULL;
 		SDL_Renderer *renderer = NULL;
 	public:
 		Game(); //Constructor
 		~Game(); //Destructor
+
 		void Initialize();
 		void Run();
+		void Setup();
 		void ProcessInput();
 		void Update();
 		void Render();
 		void Destroy();
+
 		int windowWidth = 800;
 		int windowHeight = 600;
 };

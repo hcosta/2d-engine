@@ -2,7 +2,9 @@
 
 int main(int argc, char* argv[]) {
 
-    Game game; // Si no se utiliza "new" se guarda en el stack y se borra al acabar el scope
+    // Si no se utiliza "new" al crear la instancia, se guarda
+    // en el stack y se borra de la memoria al acabar el scope
+    Game game; 
 
     game.Initialize();
     game.Run();

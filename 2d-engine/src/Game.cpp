@@ -1,20 +1,22 @@
 #include "Game.h"
-#include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <glm/glm.hpp>
+#include <spdlog/spdlog.h>
+#include <iostream>
 
 Game::Game() {
-	std::cout << "Game constructor called\n";
+	isRunning = false;
+	spdlog::info("Game constructor called");
 }
 
 Game::~Game() {
-	std::cout << "Game destructor called\n";
+	spdlog::info("Game destructor called");
 }
 
 void Game::Initialize() {
 	if (SDL_Init(SDL_INIT_EVERYTHING)!=0) {
-		std::cerr << "Error initializing SDL" << std::endl;
+		spdlog::error("Error initializing SDL");
 		return;
 	}
 
@@ -38,14 +40,14 @@ void Game::Initialize() {
 	);
 
 	if (!window) { // window == NULL
-		std::cerr << "Error creating SDL window" << std::endl;
+		spdlog::error("Error creating SDL window");
 		return;
 	}
 
 	renderer = SDL_CreateRenderer(window, -1, 0); // -1 => default
 
 	if (!renderer) { // window == NULL
-		std::cerr << "Error creating SDL renderer" << std::endl;
+		spdlog::error("Error creating SDL renderer");
 		return;
 	}
 
@@ -78,6 +80,8 @@ glm::vec2 playerVelocity;
 void Game::Setup(){
 	playerPosition = glm::vec2(10.0, 20.0);
 	playerVelocity = glm::vec2(100.0, 0.0);
+
+	fpsPrevious = SDL_GetTicks();
 }
 
 void Game::Update(){
@@ -95,6 +99,16 @@ void Game::Update(){
 
 	playerPosition.x += playerVelocity.x * deltaTime;
 	playerPosition.y += playerVelocity.y * deltaTime;
+
+	// FPS counter
+	fpsCounter++;
+	if (fpsPrevious < SDL_GetTicks() - 1000)
+	{
+		fpsPrevious = SDL_GetTicks();
+		fpsCurrent = fpsCounter;
+		fpsCounter = 0;
+	}
+
 }
 
 void Game::Render(){

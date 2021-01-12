@@ -14,6 +14,9 @@ class Game
 		bool isFakeFullscreen = false; // 800x600 escalados
 		int windowMode = SDL_WINDOW_RESIZABLE;
 		double millisecsPreviousFrame = 0;
+		double fpsCounter = 0;
+		float fpsCurrent = 0;
+		float fpsPrevious = 0;
 
 		SDL_Window *window = NULL;
 		SDL_Renderer *renderer = NULL;

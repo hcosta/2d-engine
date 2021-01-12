@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "../ECS/ECS.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <glm/glm.hpp>
@@ -78,15 +79,15 @@ glm::vec2 playerPosition;
 glm::vec2 playerVelocity;
 
 void Game::Setup(){
-	playerPosition = glm::vec2(10.0, 20.0);
-	playerVelocity = glm::vec2(100.0, 0.0);
-
-	fpsPrevious = SDL_GetTicks();
+	// Entity tank = registry.CreateEntity();
+	// tank.AddComponent<TransformComponent>();
+	// tank.AddComponent<BoxColliderComponent>();
+	// tank.AddComponent<SpriteComponent>("./assets/images/tank.png");
 }
 
 void Game::Update(){
 	// If we are too fast, waste time until reach MILLISECS_PER_FRAME
-	int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecsPreviousFrame);
+	double timeToWait = MILLISECS_PER_FRAME - (static_cast<double>(SDL_GetTicks()) - millisecsPreviousFrame);
 	if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
 		SDL_Delay(timeToWait);
 	}
@@ -97,44 +98,16 @@ void Game::Update(){
 	// Store current frame time
 	millisecsPreviousFrame = SDL_GetTicks();
 
-	playerPosition.x += playerVelocity.x * deltaTime;
-	playerPosition.y += playerVelocity.y * deltaTime;
-
-	// FPS counter
-	fpsCounter++;
-	if (fpsPrevious < SDL_GetTicks() - 1000)
-	{
-		fpsPrevious = SDL_GetTicks();
-		fpsCurrent = fpsCounter;
-		fpsCounter = 0;
-	}
-
+	// MovementSystem.Update();
+	// CollisionSystem.Update();
+	// DamageSystem.Update();
 }
 
 void Game::Render(){
 	SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
 	SDL_RenderClear(renderer);
 
-	// Draw a primitive
-	//SDL_Rect player = {10, 10, 20, 20};
-	//SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	//SDL_RenderFillRect(renderer, &player);
-
-	// Draw a PNG texture
-	SDL_Surface *surface= IMG_Load("./assets/images/tank-tiger-right.png");
-	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_FreeSurface(surface);
-
-	// Copy the full texture (or a portion) to destination renderer window
-	SDL_Rect dstRect = { 
-		static_cast<int>(playerPosition.x), 
-		static_cast<int>(playerPosition.y),
-		32, 
-		32
-	};
-
-	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
-	SDL_DestroyTexture(texture);
+	// TODO: Render game objects
 
 	SDL_RenderPresent(renderer);
 }

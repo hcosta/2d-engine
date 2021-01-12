@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <glm/glm.hpp>
 
 Game::Game() {
 	std::cout << "Game constructor called\n";
@@ -55,18 +56,6 @@ void Game::Initialize() {
 	isRunning = true;
 }
 
-void Game::Run() {
-	while(isRunning) {
-		ProcessInput();
-		Update();
-		Render();
-	}
-}
-
-void Game::Setup()
-{
-}
-
 void Game::ProcessInput() {
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) {
@@ -83,12 +72,32 @@ void Game::ProcessInput() {
 	}
 }
 
-void Game::Update()
-{
+glm::vec2 playerPosition;
+glm::vec2 playerVelocity;
+
+void Game::Setup(){
+	playerPosition = glm::vec2(10.0, 20.0);
+	playerVelocity = glm::vec2(100.0, 0.0);
 }
 
-void Game::Render()
-{
+void Game::Update(){
+	// If we are too fast, waste time until reach MILLISECS_PER_FRAME
+	int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecsPreviousFrame);
+	if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
+		SDL_Delay(timeToWait);
+	}
+
+	// Difference in ticks since last frame in seconds
+	double deltaTime = (SDL_GetTicks() - millisecsPreviousFrame) / 1000.0;
+
+	// Store current frame time
+	millisecsPreviousFrame = SDL_GetTicks();
+
+	playerPosition.x += playerVelocity.x * deltaTime;
+	playerPosition.y += playerVelocity.y * deltaTime;
+}
+
+void Game::Render(){
 	SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
 	SDL_RenderClear(renderer);
 
@@ -103,15 +112,29 @@ void Game::Render()
 	SDL_FreeSurface(surface);
 
 	// Copy the full texture (or a portion) to destination renderer window
-	SDL_Rect dstRect = {10, 10, 32, 32};
+	SDL_Rect dstRect = { 
+		static_cast<int>(playerPosition.x), 
+		static_cast<int>(playerPosition.y),
+		32, 
+		32
+	};
+
 	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
 	SDL_DestroyTexture(texture);
 
 	SDL_RenderPresent(renderer);
 }
 
-void Game::Destroy()
-{
+void Game::Run() {
+	Setup();
+	while (isRunning) {
+		ProcessInput();
+		Update();
+		Render();
+	}
+}
+
+void Game::Destroy(){
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

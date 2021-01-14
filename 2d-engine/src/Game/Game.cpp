@@ -1,13 +1,16 @@
 #include "Game.h"
+#include <spdlog/spdlog.h>
 #include "../ECS/ECS.h"
+#include "../Components/TransformComponent.h"
+#include "../Components/RigidBodyComponent.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <glm/glm.hpp>
-#include <spdlog/spdlog.h>
 #include <iostream>
 
 Game::Game() {
 	isRunning = false;
+	registry = std::make_unique<Registry>();
 	spdlog::info("Game constructor called");
 }
 
@@ -75,19 +78,21 @@ void Game::ProcessInput() {
 	}
 }
 
-glm::vec2 playerPosition;
-glm::vec2 playerVelocity;
-
 void Game::Setup(){
-	// Entity tank = registry.CreateEntity();
-	// tank.AddComponent<TransformComponent>();
-	// tank.AddComponent<BoxColliderComponent>();
-	// tank.AddComponent<SpriteComponent>("./assets/images/tank.png");
+	// Create one entity
+	Entity tank = registry->CreateEntity();
+
+	// Add some components to that entity
+	tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+	tank.AddComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
+
+	// Remove a component from entity
+	tank.RemoveComponent<TransformComponent>();
 }
 
 void Game::Update(){
 	// If we are too fast, waste time until reach MILLISECS_PER_FRAME
-	double timeToWait = MILLISECS_PER_FRAME - (static_cast<double>(SDL_GetTicks()) - millisecsPreviousFrame);
+	Uint32 timeToWait = static_cast<Uint32>(MILLISECS_PER_FRAME) - (SDL_GetTicks() - static_cast<Uint32>(millisecsPreviousFrame));
 	if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
 		SDL_Delay(timeToWait);
 	}

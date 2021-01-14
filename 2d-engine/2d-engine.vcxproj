@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Components\RigidBodyComponent.h" />
     <ClInclude Include="src\Components\TransformComponent.h" />
     <ClInclude Include="src\ECS\ECS.h" />
     <ClInclude Include="src\Logger\Logger.h" />

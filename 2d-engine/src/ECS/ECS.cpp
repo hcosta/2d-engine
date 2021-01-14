@@ -34,14 +34,18 @@ const Signature& System::GetComponentSignature() const {
 }
 
 Entity Registry::CreateEntity() {
-	int entityId = numEntities++;
+	unsigned int entityId = numEntities++;
+
+	// Make sure the entityComponentSignatures vector con accomodate the new entity
 	if (entityId >= entityComponentSignatures.size()) {
 		entityComponentSignatures.resize(entityId + 1);
 	}
+
 	Entity entity(entityId);
+	entity.registry = this; // this is to simulate direct acces to registry through from the entity
 	entitiesToBeAdded.insert(entity);
 
-	spdlog::warn("Entity created with id {0}", entityId);
+	spdlog::info("Entity created with id {0}", entityId);
 	return entity;
 }
 
@@ -74,6 +78,11 @@ void Registry::AddEntityToSystems(Entity entity) {
 //}
 
 void Registry::Update() {
-	// TODO: Add the entities that are waiting to be created to the active Systems
+	// Add the entities that are waiting to be created to the active Systems
+	for (auto entity : entitiesToBeAdded) {
+		AddEntityToSystems(entity);
+	}
+	entitiesToBeAdded.clear();
+
 	// TODO: Remove the entities that waiting to be killed from the active Systems
 }

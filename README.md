@@ -5,6 +5,7 @@ Motor 2D programado en C++17, SDL2, GLM y LUA con fines educativos.
 ## Demos
 
 <div align="center"><img src="/docs/demo_01.gif" width="500px"/></div> 
+
 ## Temas de estudio
 
 - Librerías y dependencias ✅

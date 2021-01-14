@@ -3,6 +3,9 @@
 #include "../ECS/ECS.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
+#include "../Components/SpriteComponent.h"
+#include "../Systems/MovementSystem.h"
+#include "../Systems/RenderSystem.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <glm/glm.hpp>
@@ -79,15 +82,20 @@ void Game::ProcessInput() {
 }
 
 void Game::Setup(){
-	// Create one entity
+	// Add the system that need to be processed in our game
+	registry->AddSystem<MovementSystem>();
+	registry->AddSystem<RenderSystem>();
+
+	// Create one entity and add some components to that entity
 	Entity tank = registry->CreateEntity();
-
-	// Add some components to that entity
 	tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
-	tank.AddComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
+	tank.AddComponent<RigidBodyComponent>(glm::vec2(40.0, 50.0));
+	tank.AddComponent<SpriteComponent>(10, 10);
 
-	// Remove a component from entity
-	tank.RemoveComponent<TransformComponent>();
+	Entity truck = registry->CreateEntity();
+	truck.AddComponent<TransformComponent>(glm::vec2(50.0, 100.0), glm::vec2(1.0, 1.0), 0.0);
+	truck.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 50.0));
+	truck.AddComponent<SpriteComponent>(10, 50);
 }
 
 void Game::Update(){
@@ -103,16 +111,19 @@ void Game::Update(){
 	// Store current frame time
 	millisecsPreviousFrame = SDL_GetTicks();
 
-	// MovementSystem.Update();
-	// CollisionSystem.Update();
-	// DamageSystem.Update();
+	//Update the registry to process the entities that are waiting to be created/deleted
+	registry->Update();
+
+	// Invoke all the systems that need to update
+	registry->GetSystem<MovementSystem>().Update(deltaTime);
 }
 
 void Game::Render(){
 	SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
 	SDL_RenderClear(renderer);
 
-	// TODO: Render game objects
+	// Invoke all the systems that need to render
+	registry->GetSystem<RenderSystem>().Update(renderer);
 
 	SDL_RenderPresent(renderer);
 }

@@ -247,7 +247,7 @@ TSystem& Registry::GetSystem() const {
 
 template <typename TComponent, typename ...TArgs>
 void Registry::AddComponent(Entity entity, TArgs&& ...args) {
-	const auto componentId = Component<TComponent>::GetId();
+	const unsigned int componentId = Component<TComponent>::GetId();
 	const auto entityId = entity.GetId();
 
 	if (componentId >= componentPools.size()) {

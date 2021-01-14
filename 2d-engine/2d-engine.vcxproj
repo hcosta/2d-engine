@@ -404,6 +404,7 @@
     <ClInclude Include="libs\lua\luaconf.h" />
     <ClInclude Include="libs\lua\lualib.h" />
     <ClInclude Include="libs\sol\sol.hpp" />
+    <ClInclude Include="src\Systems\AnimationSystem.h" />
     <ClInclude Include="src\Systems\MovementSystem.h" />
     <ClInclude Include="src\Systems\RenderSystem.h" />
   </ItemGroup>
@@ -543,6 +544,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AssetStore\AssetStore.cpp" />
+    <ClCompile Include="src\Components\AnimationComponent.h" />
     <ClCompile Include="src\ECS\ECS.cpp" />
     <ClCompile Include="src\Logger\Logger.cpp" />
     <ClCompile Include="src\Game\Game.cpp" />

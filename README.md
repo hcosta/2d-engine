@@ -18,7 +18,8 @@ Motor 2D programado en C++17, SDL2, GLM y LUA con fines educativos.
 - Entidades y componentes ✅
 - Sistemas ✅
 - Gestión de assets ✅
-- Sistema de animación
+- Sistema de renderizado ✅
+- Sistema de animación ✅
 - Sistema de colisiones
 - Sistema de eventos
 - Sistema de control

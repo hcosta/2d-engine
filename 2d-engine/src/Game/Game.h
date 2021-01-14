@@ -3,6 +3,7 @@
 // less code, avoidance of name clashes, and sometimes improvement in compilation speed
 #include <SDL.h>
 #include "../ECS/ECS.h"
+#include "../AssetStore/AssetStore.h"
 
 const int FPS = 60;
 const int MILLISECS_PER_FRAME = 1000 / FPS;
@@ -17,6 +18,7 @@ private:
 	int windowMode = SDL_WINDOW_RESIZABLE;
 
 	std::unique_ptr<Registry> registry;  // Registry* registry;
+	std::unique_ptr<AssetStore> assetStore;
 
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
@@ -26,6 +28,7 @@ public:
 
 	void Initialize();
 	void Run();
+	void LoadLevel(int level);
 	void Setup();
 	void ProcessInput();
 	void Update();

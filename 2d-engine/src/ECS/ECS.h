@@ -89,27 +89,56 @@ public:
 /////////////////////////////////////////////////////////////////////////////////
 // A pool is just a vector (contigous data) of objects type T
 /////////////////////////////////////////////////////////////////////////////////
-class IPool { // esta interfaz vacía nos sirve para establecer un tipo en el vector inferior
+class IPool {
 public:
-	virtual ~IPool(){} // el destructor virtual permite que la clase permanezca abstracta
+	virtual ~IPool() {}
 };
 
 template <typename T>
-class Pool: public IPool {
+class Pool : public IPool {
 private:
 	std::vector<T> data;
+
 public:
-	Pool(int size = 100) { data.resize(size); }
+	Pool(int size = 100) {
+		data.resize(size);
+	}
+
 	virtual ~Pool() = default;
-	bool isEmpty() const { return data.empty(); }
-	int GetSize() const { return data.size(); }
-	void Resize(int n) { data.resize(n); }
-	void Clear() { data.clear(); }
-	void Add(T object) { data.push_back(object); }
-	void Set(int index, T object) { data[index] = object; }
-	T& Get(int index) { return static_cast<T&>(data[index]); }
-	T& operator [](unsigned int index) { return data[index]; }
+
+	bool isEmpty() const {
+		return data.empty();
+	}
+
+	int GetSize() const {
+		return data.size();
+	}
+
+	void Resize(int n) {
+		data.resize(n);
+	}
+
+	void Clear() {
+		data.clear();
+	}
+
+	void Add(T object) {
+		data.push_back(object);
+	}
+
+	void Set(int index, T object) {
+		data[index] = object;
+	}
+
+	T& Get(int index) {
+		return static_cast<T&>(data[index]);
+	}
+
+	T& operator [](unsigned int index) {
+		return data[index];
+	}
 };
+
 
 /////////////////////////////////////////////////////////////////////////////////
 // Registry
@@ -247,7 +276,7 @@ TSystem& Registry::GetSystem() const {
 
 template <typename TComponent, typename ...TArgs>
 void Registry::AddComponent(Entity entity, TArgs&& ...args) {
-	const unsigned int componentId = Component<TComponent>::GetId();
+	const auto componentId = Component<TComponent>::GetId();
 	const auto entityId = entity.GetId();
 
 	if (componentId >= componentPools.size()) {
@@ -258,7 +287,7 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args) {
 	if (!componentPools[componentId]) {
 		// if this pool position is nullptr create a new component pool
 		// Pool<TComponent>* newComponentPool = new Pool<TComponent>();
-		std::shared_ptr<Pool<TComponent>> newComponentPool = std::make_shared<Pool<TComponent>>();
+		std::shared_ptr<Pool<TComponent>> newComponentPool(new Pool<TComponent>());
 		componentPools[componentId] = newComponentPool;
 	}
 
@@ -267,7 +296,7 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args) {
 	std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentId]);
 
 	// if the pool is too small to accomodate the entity we resize it 
-	if (entityId > componentPool->GetSize()) {
+	if (entityId >= componentPool->GetSize()) {
 		componentPool->Resize(numEntities);
 	}
 

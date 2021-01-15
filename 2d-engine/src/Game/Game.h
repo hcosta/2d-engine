@@ -11,6 +11,7 @@ const int MILLISECS_PER_FRAME = 1000 / FPS;
 class Game {
 private:
 	bool isRunning = false;
+	bool isDebug;
 	double millisecsPreviousFrame = 0;
 
 	bool isFullscreen = false;

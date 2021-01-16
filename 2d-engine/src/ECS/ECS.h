@@ -5,6 +5,7 @@
 #include <typeindex>
 #include <memory>
 #include <set>
+#include <deque>
 #include <spdlog/spdlog.h>
 
 const unsigned int MAX_COMPONENTS = 32;
@@ -43,6 +44,7 @@ private:
 public:
 	Entity(int id) : id(id) {}; // inicializa el parámetro id con ese valor
 	Entity(const Entity& entity) = default;
+	void Kill();
 	int GetId() const; // no se modificará
 
 	// Operator Overloading
@@ -169,6 +171,9 @@ private:
 	// Entities awaiting destruction in the next Registry Update()
 	std::set<Entity> entitiesToBeKilled;
 
+	// List of free entity ids that were previously removed
+	std::deque<int> freeIds;
+
 public:
 	Registry() {
 		spdlog::info("Registry constructor called");
@@ -185,6 +190,7 @@ public:
 	// Entities management
 	/////////////////////////////////////////////////////////////////////////////////
 	Entity CreateEntity();
+	void KillEntity(Entity entity);
 
 	/////////////////////////////////////////////////////////////////////////////////
 	// Component management
@@ -202,8 +208,10 @@ public:
 	template <typename TSystem> bool HasSystem() const;
 	template <typename TSystem> TSystem& GetSystem() const;
 
-	// Check the component signature of an entity and add the entity to the systems that are interesed in it
+	// Add and remove entities from their systems
+	// Check the component signature of an entity and add/remove the entity to the systems
 	void AddEntityToSystems(Entity entity);
+	void RemoveEntityFromSystems(Entity entity);
 };
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,10 @@ int Entity::GetId() const {
 	return id;
 }
 
+void Entity::Kill() {
+	registry->KillEntity(*this);
+}
+
 void System::AddEntityToSystem(Entity entity){
 	entities.push_back(entity);
 }
@@ -34,19 +38,33 @@ const Signature& System::GetComponentSignature() const {
 }
 
 Entity Registry::CreateEntity() {
-	unsigned int entityId = numEntities++;
+	int entityId;
 
-	// Make sure the entityComponentSignatures vector con accomodate the new entity
-	if (entityId >= entityComponentSignatures.size()) {
-		entityComponentSignatures.resize(entityId + 1);
+	if (freeIds.empty()) {
+		// If there are no free ids waiting to be reused
+		entityId = numEntities++;
+		if (entityId >= entityComponentSignatures.size()) {
+			entityComponentSignatures.resize(entityId + 1);
+		}
+	}
+	else {
+		// Reuse an id from the list of previously removed entities
+		entityId = freeIds.front();
+		freeIds.pop_front();
 	}
 
 	Entity entity(entityId);
-	entity.registry = this; // this is to simulate direct acces to registry through from the entity
+	entity.registry = this;
 	entitiesToBeAdded.insert(entity);
-
 	spdlog::info("Entity created with id {0}", entityId);
+
 	return entity;
+}
+
+
+void Registry::KillEntity(Entity entity) {
+	entitiesToBeKilled.insert(entity);
+	spdlog::info("Entity killed with id {0}", entity.GetId());
 }
 
 void Registry::AddEntityToSystems(Entity entity) {
@@ -73,9 +91,11 @@ void Registry::AddEntityToSystems(Entity entity) {
 	}
 }
 
-//void Registry::KillEntity(Entity entity){
-//
-//}
+void Registry::RemoveEntityFromSystems(Entity entity) {
+	for (auto system : systems) {
+		system.second->RemoveEntityFromSystem(entity);
+	}
+}
 
 void Registry::Update() {
 	// Add the entities that are waiting to be created to the active Systems
@@ -84,5 +104,13 @@ void Registry::Update() {
 	}
 	entitiesToBeAdded.clear();
 
-	// TODO: Remove the entities that waiting to be killed from the active Systems
+	// Process the entities that are waiting to be killed from the active Systems
+	for (auto entity : entitiesToBeKilled) {
+		RemoveEntityFromSystems(entity);
+		entityComponentSignatures[entity.GetId()].reset();
+
+		// Make the entity id available to be reused
+		freeIds.push_back(entity.GetId());
+	}
+	entitiesToBeKilled.clear();
 }

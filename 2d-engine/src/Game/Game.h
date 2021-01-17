@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include "../ECS/ECS.h"
 #include "../AssetStore/AssetStore.h"
+#include "../EventBus/EventBus.h" 
 
 const int FPS = 60;
 const int MILLISECS_PER_FRAME = 1000 / FPS;
@@ -20,6 +21,7 @@ private:
 
 	std::unique_ptr<Registry> registry;  // Registry* registry;
 	std::unique_ptr<AssetStore> assetStore;
+	std::unique_ptr<EventBus> eventBus;
 
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;

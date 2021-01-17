@@ -15,13 +15,14 @@ Motor 2D programado en C++17, SDL2 y LUA con fines educativos.
 - Implementación de un Logger ✅
 - Diseño de patrón ECS ✅
 - Implentación de patrón ECS ✅
-- Entidades y componentes ✅
+- Entidades  ✅
+- Componentes ✅
 - Sistemas ✅
 - Gestión de assets ✅
 - Sistema de renderizado ✅
 - Sistema de animación ✅
 - Sistema de colisiones ✅
-- Sistema de eventos
+- Sistema de eventos ✅
 - Sistema de control
 - Sistema de cámara
 - Etiquetas y grupos
@@ -30,3 +31,4 @@ Motor 2D programado en C++17, SDL2 y LUA con fines educativos.
 - Librería Dear ImGui
 - Culling y mapeado
 - Scripting con LUA
+- Editor de mapas
